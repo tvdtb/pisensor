@@ -9,7 +9,7 @@ pisensor is a demo project to show the JEE capabilities of Raspberry PI using se
 * [Raspberry Installation](#installation)
 * [Build'n run](#buildnrun)
 
-## Getting started
+## Getting started <a name="getting-started"></a>
 * Raspberry PI (I used model B+ running archlinux)
 * Adafruit BMP180 sensor
 * Java8, Maven
@@ -21,12 +21,12 @@ pisensor is a demo project to show the JEE capabilities of Raspberry PI using se
 * [REST, current temperature](http://localhost:8080/pisensor/rs/temperature)  
 * [REST, temperature history](http://localhost:8080/pisensor/rs/temperature/history)  
 
-## Core concepts
+## Core concepts <a name="core-concepts"></a>
 * pisensor uses eagerly initialized CDI beans using a portable extendsion.
 * data is published actively by CDI events every few seconds
 * RESTlets, WebSocketEndpoints and mongodb persistence are CDI event consumers and provide the latest data
 
-## Installation
+## Installation <a name="installation"></a>
 Download and install [archlinux-arm](http://archlinuxarm.org/platforms/armv6/raspberry-pi) to your sd card
 
 Login to the pi, the default login is root with password root:
@@ -95,7 +95,7 @@ Should result in (for boot, root and pi)
 
 Wire the sensor according to [this](http://www.lediouris.net/RaspberryPI/BMP180/readme.html)
 
-## Build'n run
+## Build'n run <a name="buildnrun"></a>
 
 Install JDK 8 from Oracle
 
