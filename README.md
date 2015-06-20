@@ -6,7 +6,8 @@ pisensor is a demo project to show the JEE capabilities of Raspberry PI using se
 
 * [Getting started](#getting-started)
 * [Core concepts](#core-concepts)
-* [Installation](#installation)
+* [Raspberry Installation](#installation)
+* [Build'n run](#buildnrun)
 
 ## Getting started
 * Raspberry PI (I used model B+ running archlinux)
@@ -94,8 +95,45 @@ Should result in (for boot, root and pi)
 
 Wire the sensor according to [this](http://www.lediouris.net/RaspberryPI/BMP180/readme.html)
 
+## Build'n run
+
 Install JDK 8 from Oracle
 
-Install Tomcat
-
 Package and install pisensor
+
+For non-raspberry tests omit the "raspberry" profile during maven builds and it will give you dummy data on any computer
+
+### Tomcat
+For [tomcat](http://tomcat.apache.org/) - run
+
+	mvn -P servlet-only clean package
+	
+and deploy the resulting pisensor.war to tomcat
+
+	http://localhost:8080/pisensor/rs/temperature
+
+### Wildfly-Swarm
+For [wildfly-swarm](https://github.com/wildfly-swarm/wildfly-swarm) run
+
+    mvn -P raspberry,wildfly-swarm package
+
+and run the resulting pisensor-swarm.jar using
+
+	java -jar pisensor-swarm.jar
+	http://localhost:8080/rs/temperature
+
+### Payara-Micro	
+For [payara-micro](http://www.payara.co.uk/downloads) run 
+
+    mvn -P raspberry package
+
+and then run
+
+	java -jar payara-micro-4.1.152.1.jar --deploy pisensor.war
+	http://localhost:8080/pisensor/rs/temperature
+	
+
+	
+
+
+
