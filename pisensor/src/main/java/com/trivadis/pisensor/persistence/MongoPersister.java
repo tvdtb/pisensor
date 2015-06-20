@@ -34,7 +34,7 @@ public class MongoPersister {
 	private SimpleDateFormat format;
 
 	@PostConstruct
-	public void initialize() throws ParseException {
+	public void initialize() {
 		TimeZone tz = TimeZone.getTimeZone("UTC");
 		format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
 		format.setTimeZone(tz);
@@ -47,7 +47,11 @@ public class MongoPersister {
 
 		this.lastTime = LocalDateTime.MIN;
 		if (result.size() > 0) {
-			this.lastTime = toLocal(result.get(0).getTimeOfEvent());
+			try {
+				this.lastTime = toLocal(result.get(0).getTimeOfEvent());
+			} catch (ParseException e) {
+				// ignore
+			}
 		}
 	}
 
