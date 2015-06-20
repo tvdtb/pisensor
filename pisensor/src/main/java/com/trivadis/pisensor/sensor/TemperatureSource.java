@@ -29,8 +29,7 @@ public class TemperatureSource {
 				try {
 					while (true) {
 						// THIS IS THE ACTUAL READ
-						TemperatureSource.this.current = sensor.readTemperatureFromDevice();
-						event.fire(TemperatureSource.this.current);
+						readAndPublishTemperature();
 						Thread.sleep(5000);
 					}
 				} catch (Exception e) {
@@ -38,11 +37,18 @@ public class TemperatureSource {
 				}
 
 			}
+
 		});
 		thread.setDaemon(true);
 		thread.start();
 	}
 
+//	@Schedule(persistent=false, second="0,15,30,45")
+	public void readAndPublishTemperature() {
+		TemperatureSource.this.current = sensor.readTemperatureFromDevice();
+		event.fire(TemperatureSource.this.current);
+	}
+	
 	public TemperatureEvent readTemp() {
 		return current;
 	}
