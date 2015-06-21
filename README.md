@@ -115,7 +115,7 @@ and deploy the resulting pisensor.war to tomcat
 ### Wildfly-Swarm
 For [wildfly-swarm](https://github.com/wildfly-swarm/wildfly-swarm) run
 
-    mvn -P raspberry,wildfly-swarm package
+    mvn -P raspberry,wildfly-swarm clean package
 
 and run the resulting pisensor-swarm.jar using
 
