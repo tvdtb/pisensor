@@ -14,10 +14,11 @@ public class DataEventService {
 	@Mongo
 	Datastore datastore;
 
-	public List<DataEvent> readEvents() {
+	public List<DataEvent> readEvents(int offset, int limit) {
 		List<DataEvent> result = datastore //
 				.createQuery(DataEvent.class) //
 				.order("-_id") //
+				.offset(offset).limit(limit) //
 				.asList();
 		return result;
 	}

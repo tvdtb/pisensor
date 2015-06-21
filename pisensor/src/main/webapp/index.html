@@ -4,6 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <title>Temperature</title>
 <script src="js/jquery-2.1.4.min.js"></script>
+<script src="js/hateoas.js"></script>
 <script src="js/Chart.js"></script>
 <script src="js/history.js"></script>
 <script src="js/pisensor.js"></script>
@@ -11,7 +12,7 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		pisensor.updateTemperature();
-		pisensor.updateChars();
+		pisensor.updateChartData();
 	});
 </script>
 </head>

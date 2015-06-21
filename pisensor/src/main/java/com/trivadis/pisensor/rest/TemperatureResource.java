@@ -3,10 +3,16 @@ package com.trivadis.pisensor.rest;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import com.trivadis.pisensor.TemperatureEvent;
 import com.trivadis.pisensor.persistence.DataEvent;
@@ -18,22 +24,47 @@ public class TemperatureResource {
 
 	@Inject
 	TemperatureSource tempSource;
-	
+
 	@Inject
 	DataEventService eventService;
-	
+
+	@Context
+	UriInfo uriInfo;
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public TemperatureEvent readTemp() {
 		TemperatureEvent temperature = tempSource.readTemp();
 		return temperature;
 	}
-	
+
 	@GET
 	@Path("/history")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<DataEvent> readTempHistory() {
-		return eventService.readEvents();
+	public Response readTempHistory( //
+			@QueryParam("offset") @DefaultValue("0") int offset //
+			, @QueryParam("limit") @DefaultValue("100") int limit) {
+
+		final Link next = Link.fromUriBuilder( //
+				uriInfo.getBaseUriBuilder() //
+						.path(TemperatureResource.class) //
+						.path(TemperatureResource.class, "readTempHistory") //
+						.queryParam("offset", offset + limit) //
+						.queryParam("limit", limit) //
+						.scheme(null).host(null).port(-1) // server-absolute
+				).rel("next").build();
+
+		List<DataEvent> readEvents = eventService.readEvents(offset, limit + 1);
+		
+		if (readEvents.size() > limit) {
+			readEvents.remove(limit);
+			return Response.ok(readEvents) //
+					.links(next) //
+					.build();
+		} else {
+			return Response.ok(readEvents) //
+					.build();
+		}
 	}
-	
+
 }

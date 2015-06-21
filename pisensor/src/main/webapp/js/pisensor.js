@@ -1,7 +1,8 @@
 pisensor = {
-	options : {
+	options : {}
 
-	}
+	,
+	maxlength : 100
 
 	,
 	fmtDate : function(date) {
@@ -32,73 +33,87 @@ pisensor = {
 	}
 
 	,
-	updateChars : function() {
-		jQuery.ajax("rs/temperature/history",
-				{
-					success : function(result, textStatus, jqXHR) {
+	readData : function(link, labels, dataTemp, dataPressure, chartFunction) {
+		jQuery.ajax(link, {
+			success : function(result, textStatus, jqXHR) {
+				var more = pisensor.collectData(result, labels, dataTemp,
+						dataPressure)
 
-						var dataTemp = [];
-						var dataPressure = [];
-						var labels = [];
-						var lastKey = {};
+				var links = hateoas.parse(jqXHR.getResponseHeader("Link"));
+				if (more && links.next) {
+					console.log("need more next=" + links.next);
+					pisensor.readData(links.next, labels, dataTemp,
+							dataPressure, chartFunction);
+				} else {
+					chartFunction(labels, dataTemp, dataPressure);
+				}
+			}
+		});
+	}
 
-						for (var i = 0; i < result.length; i++) {
-							if (labels.length > 50)
-								break;
+	,
+	collectData : function(result, labels, dataTemp, dataPressure) {
+		var lastLabel = {};
+		if (labels.length > 0)
+			lastLabel = labels[0];
 
-							// console.log(new Date(tempdata[i].timeOfEvent)+"
-							// "+tempdata[i].celsius);
-							var eventDate = new Date(result[i].timeOfEvent);
-							var key = pisensor.dateKey(eventDate);
+		for (var i = 0; i < result.length; i++) {
+			if (labels.length > pisensor.maxlength)
+				return false;
 
-							if (key != lastKey) {
-								console.log(key + " " + result[i].celsius)
-								dataTemp.push(result[i].celsius);
-								dataPressure.push(result[i].pressure);
-								labels.push(pisensor.fmtDate(eventDate));
+			var eventDate = new Date(result[i].timeOfEvent);
+			var label = pisensor.fmtDate(eventDate);
 
-								lastKey = key;
-							}
+			if (label != lastLabel) {
+				labels.push(label);
+				dataTemp.push(result[i].celsius);
+				dataPressure.push(result[i].pressure);
 
-						}
+				lastLabel = label;
+			}
+		}
+		return true;
+	}
 
-						dataTemp.reverse();
-						dataPressure.reverse();
-						labels.reverse();
+	,
+	updateChartData : function() {
 
-						var ctx = document.getElementById("tempChart")
-								.getContext("2d");
-						var tempChart = new Chart(ctx).Line({
-							labels : labels,
-							datasets : [ {
-								label : "Temperatur",
-								fillColor : "rgba(151,187,205,0.2)",
-								strokeColor : "rgba(151,187,205,1)",
-								pointColor : "rgba(151,187,205,1)",
-								pointStrokeColor : "#fff",
-								pointHighlightFill : "#fff",
-								pointHighlightStroke : "rgba(151,187,205,1)",
-								data : dataTemp
-							} ]
-						}, pisensor.options);
+		pisensor.readData("rs/temperature/history?offset=0&limit=10" //
+		, [], [], [] // labels, dataTemp, dataPressure //
+		, function(labels, dataTemp, dataPressure) {
+			labels.reverse();
+			dataTemp.reverse();
+			dataPressure.reverse();
 
-						ctx = document.getElementById("baroChart").getContext(
-								"2d");
-						var baroChart = new Chart(ctx).Line({
-							labels : labels,
-							datasets : [ {
-								label : "Luftdruck",
-								fillColor : "rgba(220,220,220,0.2)",
-								strokeColor : "rgba(220,220,220,1)",
-								pointColor : "rgba(220,220,220,1)",
-								pointStrokeColor : "#fff",
-								pointHighlightFill : "#fff",
-								pointHighlightStroke : "rgba(220,220,220,1)",
-								data : dataPressure
-							} ]
-						}, pisensor.options);
-					}
-				});
+			var ctx = document.getElementById("tempChart").getContext("2d");
+			var tempChart = new Chart(ctx).Line({
+				labels : labels,
+				datasets : [ {
+					label : "Temperatur",
+					fillColor : "rgba(151,187,205,0.2)",
+					strokeColor : "rgba(151,187,205,1)",
+					pointColor : "rgba(151,187,205,1)",
+					pointStrokeColor : "#fff",
+					pointHighlightFill : "#fff",
+					pointHighlightStroke : "rgba(151,187,205,1)",
+					data : dataTemp
+				} ]
+			}, pisensor.options);
 
+			ctx = document.getElementById("baroChart").getContext("2d");
+			var baroChart = new Chart(ctx).Line({
+				labels : labels,
+				datasets : [ {
+					label : "Luftdruck",
+					fillColor : "rgba(220,220,220,0.2)",
+					strokeColor : "rgba(220,220,220,1)",
+					pointColor : "rgba(220,220,220,1)",
+					pointStrokeColor : "#fff",
+					pointHighlightFill : "#fff",
+					pointHighlightStroke : "rgba(220,220,220,1)",
+					data : dataPressure
+				} ]
+			}, pisensor.options);
+		});
 	}
 }
