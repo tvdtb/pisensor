@@ -9,11 +9,28 @@
 <script src="js/history.js"></script>
 <script src="js/pisensor.js"></script>
 
+<script src="js/raphael.js"></script>
+<script src="js/justgage.js"></script>
+
+
 <script type="text/javascript">
 	$(document).ready(function() {
-		pisensor.updateTemperature();
+		gauge = new JustGage({
+			id : "gauge",
+			value : null,
+			min : -20,
+			max : 60,
+			levelColors : [ "#0000f6", "#ffff00", "#00ff00", "#ff0000" ],
+			title : "Temperatur"
+		});
+		
+		pisensor.updateTemperature(function(data) {
+	 		gauge.refresh(data.temperature);
+		});
 		pisensor.updateChartData();
+
 	});
+
 </script>
 </head>
 <body>
@@ -28,11 +45,13 @@
 		Luftdruck: <span id="currentPressure"> </span> hPa
 	</div>
 
+	<div id="gauge" style="width: 200px; height: 160px;"></div>
+
 	<div style="height: 10px;">&#160;</div>
-	
+
 	<div>Temperatur in °C</div>
 	<canvas id="tempChart" width="1000" height="300"></canvas>
-	
+
 	<div>Luftdruck in hPa</div>
 	<canvas id="baroChart" width="1000" height="300"></canvas>
 

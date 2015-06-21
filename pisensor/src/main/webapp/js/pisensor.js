@@ -19,7 +19,7 @@ pisensor = {
 	}
 
 	,
-	updateTemperature : function() {
+	updateTemperature : function(callback) {
 		jQuery.ajax("rs/temperature", {
 			success : function(data, textStatus, jqXHR) {
 				window.tmp = data;
@@ -28,6 +28,8 @@ pisensor = {
 				$('#currentDate').text(new Date(data.time).toLocaleString());
 				$('#currentTemp').text("" + data.temperature);
 				$('#currentPressure').text("" + data.pressure);
+				
+				callback(data);
 			}
 		});
 	}
@@ -78,7 +80,7 @@ pisensor = {
 	,
 	updateChartData : function() {
 
-		pisensor.readData("rs/temperature/history?offset=0&limit=10" //
+		pisensor.readData("rs/temperature/history?offset=0&limit=100" //
 		, [], [], [] // labels, dataTemp, dataPressure //
 		, function(labels, dataTemp, dataPressure) {
 			labels.reverse();
