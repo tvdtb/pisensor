@@ -1,66 +1,128 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>testing web sockets</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<title>Temperature</title>
+<script src="js/jquery-2.1.4.min.js"></script>
+<script src="js/Chart.js"></script>
+<script src="js/history.js"></script>
 </head>
 <body>
+
 	<div>
-		<input type="text" id="userinput" /> <br> <input type="submit"
-			value="Send Message to Server" onclick="start()" />
+		Messung am: <span id="currentDate"> </span>
 	</div>
-	<div id="messages"></div>
+	<div>
+		Aktuelle Temperatur: <span id="currentTemp"> </span> °C
+	</div>
+	<div>
+		Luftdruck: <span id="currentPressure"> </span> hPa
+	</div>
+
+	<div style="height: 10px;">&#160;</div>
+	
+	<div>Temperatur in °C</div>
+	<canvas id="tempChart" width="1000" height="300"></canvas>
+	
+	<div>Luftdruck in hPa</div>
+	<canvas id="baroChart" width="1000" height="300"></canvas>
+
+
+
 	<script type="text/javascript">
-		function relativeWSUrl(s) {
-			var l = window.location;
-			var dir = l.pathname.substring(0, l.pathname.lastIndexOf('/'));
-			var result = ((l.protocol === "https:") ? "wss://" : "ws://")
-					+ l.hostname
-					+ (((l.port != 80) && (l.port != 443)) ? ":" + l.port : "")
-					+ dir + s;
-			console.log("path="+l.pathname+" dir="+dir+" result="+result);
-			return result;
-		}
+		var options = {
 
-		//var webSocket = new WebSocket('ws://192.168.178.44:8080/temperature');
-		//var webSocket = new WebSocket('ws://5180.no-ip.org:18080/temperature');
-		var url = document.location.href;
-		var webSocket = new WebSocket(relativeWSUrl('/temperature'));
-
-		webSocket.binaryType = "arraybuffer";
-
-		webSocket.onerror = function(event) {
-			onError(event)
 		};
 
-		webSocket.onopen = function(event) {
-			onOpen(event)
-		};
-
-		webSocket.onmessage = function(event) {
-			onMessage(event);
-		};
-
-		function onMessage(event) {
-			console.log("Message ");
-			console.log(event);
-			document.getElementById('messages').innerHTML += '<br />'
-					+ event.data;
+		fmtDate = function(date) {
+			var minutes = date.getMinutes();
+			minutes = minutes < 10 ? "0" + minutes : "" + minutes;
+			return "" + date.getDate() + "." + date.getMonth() + ". "
+					+ date.getHours() + ":00";
 		}
 
-		function onOpen(event) {
-			document.getElementById('messages').innerHTML = 'Now Connection established';
+		dateKey = function(date) {
+			return "" + date.getMonth() + "-" + date.getDate() + "."
+					+ date.getHours();
 		}
 
-		function onError(event) {
-			alert(event.data);
-		}
+		jQuery.ajax("rs/temperature", {
+			success : function(data, textStatus, jqXHR) {
+				window.tmp = data;
+				console.log(data);
+				console.log(new Date(data.time));
+				$('#currentDate').text(new Date(data.time).toLocaleString());
+				$('#currentTemp').text("" + data.temperature);
+				$('#currentPressure').text("" + data.pressure);
+			}
+		});
 
-		function start() {
-			var text = document.getElementById("userinput").value;
+		jQuery.ajax("rs/temperature/history",
+				{
+					success : function(result, textStatus, jqXHR) {
 
-			webSocket.send(text);
-			return false;
-		}
+						var dataTemp = [];
+						var dataPressure = [];
+						var labels = [];
+						var lastKey = {};
+
+						for (var i = 0; i < result.length; i++) {
+							if (labels.length > 50)
+								break;
+
+							// 		console.log(new Date(tempdata[i].timeOfEvent)+"  "+tempdata[i].celsius);
+							var eventDate = new Date(result[i].timeOfEvent);
+							var key = dateKey(eventDate);
+
+							if (key != lastKey) {
+								console.log(key + " " + result[i].celsius)
+								dataTemp.push(result[i].celsius);
+								dataPressure.push(result[i].pressure);
+								labels.push(fmtDate(eventDate));
+
+								lastKey = key;
+							}
+
+						}
+
+						dataTemp.reverse();
+						dataPressure.reverse();
+						labels.reverse();
+
+						var ctx = document.getElementById("tempChart")
+								.getContext("2d");
+						var tempChart = new Chart(ctx).Line({
+							labels : labels,
+							datasets : [ {
+								label : "Temperatur",
+								fillColor : "rgba(151,187,205,0.2)",
+								strokeColor : "rgba(151,187,205,1)",
+								pointColor : "rgba(151,187,205,1)",
+								pointStrokeColor : "#fff",
+								pointHighlightFill : "#fff",
+								pointHighlightStroke : "rgba(151,187,205,1)",
+								data : dataTemp
+							} ]
+						}, options);
+
+						ctx = document.getElementById("baroChart").getContext(
+								"2d");
+						var baroChart = new Chart(ctx).Line({
+							labels : labels,
+							datasets : [ {
+								label : "Luftdruck",
+								fillColor : "rgba(220,220,220,0.2)",
+								strokeColor : "rgba(220,220,220,1)",
+								pointColor : "rgba(220,220,220,1)",
+								pointStrokeColor : "#fff",
+								pointHighlightFill : "#fff",
+								pointHighlightStroke : "rgba(220,220,220,1)",
+								data : dataPressure
+							} ]
+						}, options);
+					}
+				});
 	</script>
+
 </body>
 </html>

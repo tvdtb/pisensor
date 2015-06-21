@@ -2,12 +2,22 @@ package com.trivadis.pisensor;
 
 import java.time.LocalDateTime;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class TemperatureEvent {
 
 	/**
 	 * time of measurement (local)
 	 */
+	@XmlJavaTypeAdapter(ISODateAdapter.class)
 	private LocalDateTime time;
+	
 	/** 
 	 * temperature measured in degrees celsius
 	 */

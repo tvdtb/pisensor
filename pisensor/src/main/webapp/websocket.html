@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>testing web sockets</title>
+</head>
+<body>
+	<div>
+		<input type="text" id="userinput" /> <br> <input type="submit"
+			value="Send Message to Server" onclick="start()" />
+	</div>
+	<div id="messages"></div>
+	<script type="text/javascript">
+		function relativeWSUrl(s) {
+			var l = window.location;
+			var dir = l.pathname.substring(0, l.pathname.lastIndexOf('/'));
+			var result = ((l.protocol === "https:") ? "wss://" : "ws://")
+					+ l.hostname
+					+ (((l.port != 80) && (l.port != 443)) ? ":" + l.port : "")
+					+ dir + s;
+			console.log("path="+l.pathname+" dir="+dir+" result="+result);
+			return result;
+		}
+
+		//var webSocket = new WebSocket('ws://192.168.178.44:8080/temperature');
+		//var webSocket = new WebSocket('ws://5180.no-ip.org:18080/temperature');
+		var url = document.location.href;
+		var webSocket = new WebSocket(relativeWSUrl('/temperature'));
+
+		webSocket.binaryType = "arraybuffer";
+
+		webSocket.onerror = function(event) {
+			onError(event)
+		};
+
+		webSocket.onopen = function(event) {
+			onOpen(event)
+		};
+
+		webSocket.onmessage = function(event) {
+			onMessage(event);
+		};
+
+		function onMessage(event) {
+			console.log("Message ");
+			console.log(event);
+			document.getElementById('messages').innerHTML += '<br />'
+					+ event.data;
+		}
+
+		function onOpen(event) {
+			document.getElementById('messages').innerHTML = 'Now Connection established';
+		}
+
+		function onError(event) {
+			alert(event.data);
+		}
+
+		function start() {
+			var text = document.getElementById("userinput").value;
+
+			webSocket.send(text);
+			return false;
+		}
+	</script>
+</body>
+</html>

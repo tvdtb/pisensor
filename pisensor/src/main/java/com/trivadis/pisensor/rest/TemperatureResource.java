@@ -23,10 +23,10 @@ public class TemperatureResource {
 	DataEventService eventService;
 	
 	@GET
-	@Produces(MediaType.TEXT_PLAIN)
-	public String readTemp() {
+	@Produces(MediaType.APPLICATION_JSON)
+	public TemperatureEvent readTemp() {
 		TemperatureEvent temperature = tempSource.readTemp();
-		return "result = "+temperature;
+		return temperature;
 	}
 	
 	@GET
