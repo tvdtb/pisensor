@@ -57,7 +57,7 @@ pisensor = {
 	collectData : function(result, labels, dataTemp, dataPressure) {
 		var lastLabel = {};
 		if (labels.length > 0)
-			lastLabel = labels[0];
+			lastLabel = labels[labels.length-1];
 
 		for (var i = 0; i < result.length; i++) {
 			if (labels.length > pisensor.maxlength)
