@@ -27,7 +27,7 @@ pisensor = {
 				console.log(new Date(data.time));
 				$('#currentDate').text(new Date(data.time).toLocaleString());
 				$('#currentTemp').text("" + data.temperature);
-				$('#currentPressure').text("" + data.pressure);
+				$('#currentPressure').text("" + (data.pressure/100));
 				
 				callback(data);
 			}
@@ -69,7 +69,7 @@ pisensor = {
 			if (label != lastLabel) {
 				labels.push(label);
 				dataTemp.push(result[i].celsius);
-				dataPressure.push(result[i].pressure);
+				dataPressure.push(result[i].pressure / 100);
 
 				lastLabel = label;
 			}

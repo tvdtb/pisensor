@@ -12,7 +12,7 @@ public class TemperatureSensorDummy implements TemperatureSensor {
 
 	@Override
 	public TemperatureEvent readTemperatureFromDevice() {
-		return new TemperatureEvent(LocalDateTime.now(), -1, 1000f);
+		return new TemperatureEvent(LocalDateTime.now(), -1, 1000f*100f /* hPa */);
 	}
 
 	

@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import org.mongodb.morphia.Datastore;
 
 import com.trivadis.cdi.eager.Eager;
+import com.trivadis.pisensor.ISODateAdapter;
 import com.trivadis.pisensor.TemperatureEvent;
 import com.trivadis.pisensor.persistence.mongodb.Mongo;
 
@@ -29,16 +30,14 @@ public class MongoPersister {
 	@Mongo
 	Datastore datastore;
 
+	@Inject
+	ISODateAdapter iso;
+	
 	private LocalDateTime lastTime;
 
-	private SimpleDateFormat format;
 
 	@PostConstruct
 	public void initialize() {
-		TimeZone tz = TimeZone.getTimeZone("UTC");
-		format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
-		format.setTimeZone(tz);
-		
 		List<DataEvent> result = datastore //
 				.createQuery(DataEvent.class) //
 				.order("-_id") //
@@ -55,9 +54,8 @@ public class MongoPersister {
 		}
 	}
 
-	private LocalDateTime toLocal(String iso) throws ParseException {
-		Date parsed = format.parse(iso);
-		LocalDateTime local = LocalDateTime.ofInstant(parsed.toInstant(), ZoneId.systemDefault());
+	private LocalDateTime toLocal(String isoString) throws ParseException {
+		LocalDateTime local = iso.unmarshal(isoString);
 		return local;
 	}
 	
@@ -75,9 +73,8 @@ public class MongoPersister {
 	}
 
 	private String toISO(LocalDateTime dateTime) {
-		Date d = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
-		String iso = format.format(d);
-		return iso;
+		String isoString = iso.marshal(dateTime);
+		return isoString;
 	}
 
 }
