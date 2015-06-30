@@ -34,6 +34,7 @@ Login to the pi, the default login is root with password root:
     ssh root@192.168....
 
 Update the distribution: 
+
     pacman -Syu
     
 Activate ntp: 
@@ -98,6 +99,10 @@ Wire the sensor according to [this](http://www.lediouris.net/RaspberryPI/BMP180/
 ## Build'n run <a name="buildnrun"></a>
 
 Install JDK 8 from Oracle
+
+Build cdiext
+
+	mvn clean install
 
 Package and install pisensor
 

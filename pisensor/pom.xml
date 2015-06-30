@@ -11,6 +11,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
+		<paho.version>0.4.0</paho.version>
 	</properties>
 
 	<build>
@@ -23,6 +24,12 @@
 			<artifactId>javaee-api</artifactId>
 			<version>7.0</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.paho</groupId>
+			<artifactId>mqtt-client</artifactId>
+			<version>${paho.version}</version>
 		</dependency>
 
 		<!-- This one relies on pi4j on raspberry pi -->
@@ -39,6 +46,15 @@
 			<artifactId>morphia</artifactId>
 			<version>0.109</version>
 		</dependency>
+
+
+		<!-- cdi extensions -->
+		<dependency>
+			<groupId>com.trivadis</groupId>
+			<artifactId>cdiext</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
 
 	</dependencies>
 
@@ -186,4 +202,16 @@
 			</dependencies>
 		</profile>
 	</profiles>
+
+
+	<repositories>
+		<repository>
+			<id>sonatype-nexus-snapshots</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</repository>
+		<repository>
+			<id>Eclipse Paho Repo</id>
+			<url>https://repo.eclipse.org/content/repositories/paho-releases/</url>
+		</repository>
+	</repositories>
 </project>
