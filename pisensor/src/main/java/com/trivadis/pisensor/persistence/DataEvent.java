@@ -4,7 +4,7 @@ import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 
-// db.DataEvent.update({}, { $unset: { className: "" } } )
+// db.DataEvent.update({}, { $unset: { className: "" } }, { multi: true})
 @Entity(noClassnameStored=true)
 public class DataEvent {
 	@Id
