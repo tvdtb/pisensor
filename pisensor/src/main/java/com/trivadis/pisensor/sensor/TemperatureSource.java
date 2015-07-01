@@ -11,7 +11,7 @@ import com.trivadis.pisensor.TemperatureEvent;
 @ApplicationScoped
 @Eager
 public class TemperatureSource {
-	
+
 	@Inject
 	TemperatureSensor sensor;
 
@@ -22,33 +22,20 @@ public class TemperatureSource {
 
 	@PostConstruct
 	public void init() {
-		Thread thread = new Thread(new Runnable() {
-
+		new DeviceThread(5000) {
 			@Override
-			public void run() {
-				try {
-					while (true) {
-						// THIS IS THE ACTUAL READ
-						readAndPublishTemperature();
-						Thread.sleep(5000);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
+			public void performDeviceAccess() {
+				readAndPublishTemperature();
 			}
-
-		});
-		thread.setDaemon(true);
-		thread.start();
+		}.start();
 	}
 
-//	@Schedule(persistent=false, second="0,15,30,45")
+	// @Schedule(persistent=false, second="0,15,30,45")
 	public void readAndPublishTemperature() {
 		TemperatureSource.this.current = sensor.readTemperatureFromDevice();
 		event.fire(TemperatureSource.this.current);
 	}
-	
+
 	public TemperatureEvent readTemp() {
 		return current;
 	}
