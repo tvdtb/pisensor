@@ -28,6 +28,7 @@ public class AutoUpdaterService {
 	@PostConstruct
 	public void init() {
 			nf1 = DecimalFormat.getNumberInstance();
+			nf1.setMinimumFractionDigits(1);
 			nf1.setMaximumFractionDigits(1);
 
 			nf0 = DecimalFormat.getNumberInstance();
