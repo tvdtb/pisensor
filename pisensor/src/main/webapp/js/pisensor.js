@@ -1,8 +1,10 @@
 pisensor = {
-	options : {}
-
+	options : {
+		pointDotRadius : 2,
+		pointHitDetectionRadius : 2,
+	}
 	,
-	maxlength : 100
+	maxlength : 80
 
 	,
 	fmtDate : function(date) {
@@ -23,8 +25,6 @@ pisensor = {
 		jQuery.ajax("rs/temperature", {
 			success : function(data, textStatus, jqXHR) {
 				window.tmp = data;
-				console.log(data);
-				console.log(new Date(data.time));
 				$('#currentDate').text(new Date(data.time).toLocaleString());
 				$('#currentTemp').text("" + data.temperature);
 				$('#currentPressure').text("" + (data.pressure/100));
