@@ -21,7 +21,7 @@ public class DistanceSource {
 
 	@PostConstruct
 	public void init() {
-		new DeviceThread(2000) {
+		new DeviceThread("ultrasonic", 500) {
 			@Override
 			public void performDeviceAccess() {
 				readAndPublishDistance();

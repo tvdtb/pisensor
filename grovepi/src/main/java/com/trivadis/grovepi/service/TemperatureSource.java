@@ -21,7 +21,7 @@ public class TemperatureSource {
 
 	@PostConstruct
 	public void init() {
-		new DeviceThread(10000) {
+		new DeviceThread("temp", 5000) {
 			@Override
 			public void performDeviceAccess() {
 				readAndPublishTemperature();

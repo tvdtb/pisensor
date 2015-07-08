@@ -3,11 +3,14 @@ package com.trivadis.grovepi.device;
 public class DeviceThread extends Thread {
 	
 	private long sleepTime;
+	private String name;
 
 
-	public DeviceThread(long sleepTime) {
+	public DeviceThread(String name, long sleepTime) {
+		this.name = name;
 		this.sleepTime = sleepTime;
 		setDaemon(true);
+		setName("DeviceThread-"+name);
 	}
 
 	
@@ -18,21 +21,22 @@ public class DeviceThread extends Thread {
 				
 				performDeviceAccess();
 				
-				Thread.sleep(2000);
+				Thread.sleep(sleepTime);
 
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (Throwable e) {
+				System.out.println("IOError: "+name+" "+e.getMessage());
+//				e.printStackTrace();
 				errors++;
-				if (errors > 10)
-					return;
-				else {
+//				if (errors > 10)
+//					return;
+//				else {
 					try {
-						Thread.sleep(5000);
+						Thread.sleep(500);
 					} catch (InterruptedException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-				}
+//				}
 			}
 		}
 	}

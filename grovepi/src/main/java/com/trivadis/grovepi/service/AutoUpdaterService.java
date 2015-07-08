@@ -21,9 +21,21 @@ public class AutoUpdaterService {
 
 	private String line1="";
 	private String line2="";
+	private int increment=1;
 	
 	@Inject
 	LCDService service;
+	
+	private int[][] colors = new int[][] {
+			{ 255, 0, 0 }
+			, { 255, 255, 0 }
+			, { 0, 255, 0 }
+			, { 180, 180, 180 }
+	};
+	private int[] ranges = new int[] {15, 25, 35, Integer.MAX_VALUE};
+	private int[] color = colors[2];
+
+	
 	
 	@PostConstruct
 	public void init() {
@@ -33,21 +45,29 @@ public class AutoUpdaterService {
 
 			nf0 = DecimalFormat.getNumberInstance();
 			nf0.setMaximumFractionDigits(0);
+			nf0.setGroupingUsed(false);
 	}
 
 	public void updateText(@Observes TemperatureHumidity tempHum)  {
-		line1 = nf1.format(tempHum.getTemp())+"Grad C, " //
+		line1 = nf1.format(tempHum.getTemp())+" Grad C, " //
 				+nf0.format(tempHum.getHumidity())+"%";
 		updateText();
 	}
 	public void updateText(@Observes Distance distance)  {
-		line2 = nf1.format(distance.getDistance())+"cm";
-		updateText();
+		if (distance.getDistance()>0) {
+			line2 = nf0.format(distance.getDistance())+"cm";
+			int colorIndex = 0;
+			while (distance.getDistance() > ranges[colorIndex])
+				colorIndex++;
+			color = colors[colorIndex];
+			updateText();
+		}
 	}
 	
 	private void updateText() {
-		String msg = line1+"\n"+line2;
+		String msg = line1+"\n"+line2+"  #"+(increment++);
 		service.setText(msg, 5000);
+		service.setColor(color[0], color[1], color[2]);
 	}
 
 

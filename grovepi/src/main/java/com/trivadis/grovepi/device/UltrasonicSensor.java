@@ -16,9 +16,9 @@ public class UltrasonicSensor {
 
 	I2cPin pin;
 
-	public void init() {
+	public void init(int pinNumber) {
 		try {
-			pin = GrovePi.getInstance().createI2cPin(4);
+			pin = GrovePi.getInstance().createI2cPin(pinNumber);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -29,10 +29,14 @@ public class UltrasonicSensor {
 			synchronized (GrovePi.class) {
 
 				pin.writeCommand(ULTRASONIC_READ_CMD);
-				GrovePi.sleep(500);
+				GrovePi.sleep(150);
 				byte[] buffer = pin.read(3);
-				return new Distance(((buffer[1] & 0xFF) << 8)
-						+ (buffer[2] & 0xFF), LocalDateTime.now());
+				int distance = ((buffer[1] & 0xFF) << 8)
+						+ (buffer[2] & 0xFF);
+				
+				if (distance==0)
+					distance = -1;
+				return new Distance(distance, LocalDateTime.now());
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);

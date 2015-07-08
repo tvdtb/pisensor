@@ -15,7 +15,7 @@ public class UltrasonicService {
 
 	public void init() {
 		this.sensor = new UltrasonicSensor();
-		sensor.init();
+		sensor.init(4);
 	}
 
 	public Distance readDistance() {
