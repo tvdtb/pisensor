@@ -32,7 +32,7 @@ public class AutoUpdaterService {
 			, { 0, 255, 0 }
 			, { 180, 180, 180 }
 	};
-	private int[] ranges = new int[] {15, 25, 35, Integer.MAX_VALUE};
+	private int[] ranges = new int[] {15, 35, 75, Integer.MAX_VALUE};
 	private int[] color = colors[2];
 
 	
