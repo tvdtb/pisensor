@@ -25,7 +25,10 @@ public class DatastoreProducer {
 		
 		try {
 			String mongoURI = "mongodb://localhost/pitemp?safe=true&w=majority";
-            final MongoClientOptions.Builder cob = MongoClientOptions.builder().heartbeatFrequency(60000);
+            final MongoClientOptions.Builder cob = MongoClientOptions.builder() //
+            		.heartbeatFrequency(60000) //
+            		.connectTimeout(60000) //
+            		;
 			MongoClientURI mongoClientURI = new MongoClientURI(mongoURI, cob);
 			MongoClient mongoClient = new MongoClient(mongoClientURI);
 

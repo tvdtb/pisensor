@@ -38,20 +38,20 @@ public class MongoPersister {
 
 	@PostConstruct
 	public void initialize() {
-		List<DataEvent> result = datastore //
-				.createQuery(DataEvent.class) //
-				.order("-_id") //
-				.limit(1) //
-				.asList();
+//		List<DataEvent> result = datastore //
+//				.createQuery(DataEvent.class) //
+//				.order("-_id") //
+//				.limit(1) //
+//				.asList();
 
 		this.lastTime = LocalDateTime.MIN;
-		if (result.size() > 0) {
-			try {
-				this.lastTime = toLocal(result.get(0).getTimeOfEvent());
-			} catch (ParseException e) {
-				// ignore
-			}
-		}
+//		if (result.size() > 0) {
+//			try {
+//				this.lastTime = toLocal(result.get(0).getTimeOfEvent());
+//			} catch (ParseException e) {
+//				// ignore
+//			}
+//		}
 	}
 
 	private LocalDateTime toLocal(String isoString) throws ParseException {

@@ -80,7 +80,7 @@ pisensor = {
 	,
 	updateChartData : function() {
 
-		pisensor.readData("rs/temperature/history?offset=0&limit=100" //
+		pisensor.readData("rs/temperature/history?offset=0&limit=500" //
 		, [], [], [] // labels, dataTemp, dataPressure //
 		, function(labels, dataTemp, dataPressure) {
 			labels.reverse();
