@@ -1,6 +1,7 @@
 # pisensor
 
 pisensor is a demo project to show the JEE capabilities of Raspberry PI using sensors, mondogb persistence and REST/websocket interface.
+The latest update includes JEE microedition runtimes as well as basic web containers (jetty, tomcat)
 
 ## Index
 
@@ -8,8 +9,14 @@ pisensor is a demo project to show the JEE capabilities of Raspberry PI using se
 * [Core concepts](#core-concepts)
 * [Raspberry Installation](#installation)
 * [Build'n run](#buildnrun)
+* [Payara microprofile](#payara-microprofile)
+* [Wildfly Swarm](#wildfly-swarm)
+* [Other JEE](#other-jee)
+* [Servlet Container Jetty & Tomcat](#servlet)
 
 ## Getting started <a name="getting-started"></a>
+This is what you need for running a real-world sensor. But you can also run it as a simple microedition demo.
+
 * Raspberry PI (I used model B+ running archlinux)
 * Adafruit BMP180 sensor
 * Java8, Maven
@@ -17,11 +24,9 @@ pisensor is a demo project to show the JEE capabilities of Raspberry PI using se
 * Tomcat or Wildfly (activate the maven profile "tomcat" for tomcat)
 * i2c Access (activate alternative in beans.xml for local tests)
 
-* [Websocket access](http://localhost:8080/pisensor/index.html)
-* [REST, current temperature](http://localhost:8080/pisensor/rs/temperature)  
-* [REST, temperature history](http://localhost:8080/pisensor/rs/temperature/history)  
 
 ## Core concepts <a name="core-concepts"></a>
+* pisensor is based on JEE - in more detail: JAX-RS, CDI and Servlet 2.5+
 * pisensor uses eagerly initialized CDI beans using a portable extendsion.
 * data is published actively by CDI events every few seconds
 * RESTlets, WebSocketEndpoints and mongodb persistence are CDI event consumers and provide the latest data
@@ -106,7 +111,23 @@ Build cdiext
 
 Package and install pisensor
 
-For non-raspberry tests omit the "raspberry" profile during maven builds and it will give you dummy data on any computer
+For local tests omit the "raspberry" profile during maven builds and it will give you dummy data on any computer
+
+Use these links for testing
+* [Websocket access](http://localhost:8080/index.html)
+* [REST, current temperature](http://localhost:8080/rs/temperature)  
+* [REST, temperature history](http://localhost:8080/rs/temperature/history)  
+
+
+### Payara MicroProfile <a name="payara-microprofile"></a>
+For [Payara Microprofile](http://blog.payara.fish/payara-micro-profile-1.0-released) - run
+
+	mvn -P raspberry,payara-microprofile clean package
+	
+and run the resulting uber jar
+
+	java -jar pisensor.jar --noCluster --disablePhoneHome
+	[http://localhost:8080/rs/temperature](http://localhost:8080/rs/temperature)
 
 ### Tomcat
 For [tomcat](http://tomcat.apache.org/) - run
@@ -117,7 +138,7 @@ and deploy the resulting pisensor.war to tomcat
 
 	http://localhost:8080/pisensor/rs/temperature
 
-### Wildfly-Swarm
+### Wildfly-Swarm <a name="wildfly-swarm"></a>
 For [wildfly-swarm](https://github.com/wildfly-swarm/wildfly-swarm) run
 
     mvn -P raspberry,wildfly-swarm clean package
@@ -127,15 +148,19 @@ and run the resulting pisensor-swarm.jar using
 	java -jar pisensor-swarm.jar
 	http://localhost:8080/rs/temperature
 
-### Payara-Micro	
-For [payara-micro](http://www.payara.co.uk/downloads) run 
+### Other JEE <a name="other-jee"></a>
 
     mvn -P raspberry package
 
 and then run
 
-	java -jar payara-micro-4.1.152.1.jar --deploy pisensor.war
-	http://localhost:8080/pisensor/rs/temperature
+For [payara-micro](http://www.payara.co.uk/downloads) run 
+
+	java -jar payara-micro-4.1.1.163.jar --deploy pisensor.war
+	http://localhost:8080/rs/temperature
+
+Other tested servers are JBoss Wildfly and Glassfish
+
 	
 
 	
