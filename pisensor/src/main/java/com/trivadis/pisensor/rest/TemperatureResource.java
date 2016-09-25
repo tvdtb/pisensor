@@ -43,7 +43,8 @@ public class TemperatureResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response readTempHistory( //
 			@QueryParam("offset") @DefaultValue("0") int offset //
-			, @QueryParam("limit") @DefaultValue("100") int limit) {
+			, @QueryParam("limit") @DefaultValue("100") int limit
+			, @QueryParam("scale") @DefaultValue("1") int scale) {
 
 		final Link next = Link.fromUriBuilder( //
 				uriInfo.getBaseUriBuilder() //
@@ -51,18 +52,19 @@ public class TemperatureResource {
 						.path(TemperatureResource.class, "readTempHistory") //
 						.queryParam("offset", offset + limit) //
 						.queryParam("limit", limit) //
+						.queryParam("scale", scale) //
 						.scheme(null).host(null).port(-1) // server-absolute
 				).rel("next").build();
 
-		List<DataEvent> readEvents = eventService.readEvents(offset, limit + 1);
+		List<DataEvent> readEvents = eventService.readEvents(offset, limit + 1, scale);
 		
 		if (readEvents.size() > limit) {
 			readEvents.remove(limit);
-			return Response.ok(readEvents) //
+			return Response.ok(readEvents.toArray(new DataEvent[readEvents.size()])) //
 					.links(next) //
 					.build();
 		} else {
-			return Response.ok(readEvents) //
+			return Response.ok(readEvents.toArray(new DataEvent[readEvents.size()])) //
 					.build();
 		}
 	}

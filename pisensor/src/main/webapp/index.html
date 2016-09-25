@@ -27,7 +27,11 @@
 		pisensor.updateTemperature(function(data) {
 	 		gauge.refresh(data.temperature);
 		});
-		pisensor.updateChartData();
+		
+		document.chartScale = 1;
+		document.offset = 0;
+		
+		pisensor.updateChartData(document.offset, document.chartScale);
 
 	});
 
@@ -49,11 +53,18 @@
 
 	<div style="height: 10px;">&#160;</div>
 
-	<div>Temperatur in °C</div>
-	<canvas id="tempChart" width="1000" height="300"></canvas>
+
+	<div>
+		Temperatur in °C
+		<a href="#" onclick="document.offset=Math.max(0, document.offset+100);       pisensor.updateChartData(document.offset, document.chartScale); return false;">[&lt;&lt;]</a>
+		<a href="#" onclick="document.chartScale=Math.max(1, document.chartScale+3); pisensor.updateChartData(document.offset, document.chartScale); return false;">[-]</a>
+		<a href="#" onclick="document.chartScale=Math.max(1, document.chartScale-3); pisensor.updateChartData(document.offset, document.chartScale); return false;">[+]</a>
+		<a href="#" onclick="document.offset=Math.max(0, document.offset-100);       pisensor.updateChartData(document.offset, document.chartScale); return false;">[&gt;&gt;]</a>
+	</div>
+	<div id="tempChart" > </div>
 
 	<div>Luftdruck in hPa</div>
-	<canvas id="baroChart" width="1000" height="300"></canvas>
+	<div id="baroChart" > </div>
 
 </body>
 </html>

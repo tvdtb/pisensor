@@ -78,16 +78,23 @@ pisensor = {
 	}
 
 	,
-	updateChartData : function() {
+	updateChartData : function(offset, scale) {
 
-		pisensor.readData("rs/temperature/history?offset=0&limit=500" //
+		pisensor.readData("rs/temperature/history?offset="+offset+"&limit=200&scale="+scale //
 		, [], [], [] // labels, dataTemp, dataPressure //
 		, function(labels, dataTemp, dataPressure) {
 			labels.reverse();
 			dataTemp.reverse();
 			dataPressure.reverse();
 
-			var ctx = document.getElementById("tempChart").getContext("2d");
+			var div = document.getElementById("tempChart");
+			div.innerHTML='';
+			var canvas = document.createElement("canvas");
+			canvas.width=1000;
+			canvas.height=300;
+			var ctx = canvas.getContext("2d");
+			div.appendChild(canvas);
+			
 			var tempChart = new Chart(ctx).Line({
 				labels : labels,
 				datasets : [ {
@@ -102,7 +109,14 @@ pisensor = {
 				} ]
 			}, pisensor.options);
 
-			ctx = document.getElementById("baroChart").getContext("2d");
+			div = document.getElementById("baroChart");
+			div.innerHTML='';
+			canvas = document.createElement("canvas");
+			canvas.width=1000;
+			canvas.height=300;
+			ctx = canvas.getContext("2d");
+			div.appendChild(canvas);
+
 			var baroChart = new Chart(ctx).Line({
 				labels : labels,
 				datasets : [ {
