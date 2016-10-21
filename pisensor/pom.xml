@@ -218,7 +218,7 @@
 
 
 		<profile>
-			<id>payara-microedition</id>
+			<id>payara-microprofile</id>
 
 			<build>
 				<plugins>

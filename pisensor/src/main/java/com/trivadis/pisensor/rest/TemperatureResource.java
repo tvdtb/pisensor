@@ -58,13 +58,19 @@ public class TemperatureResource {
 
 		List<DataEvent> readEvents = eventService.readEvents(offset, limit + 1, scale);
 		
+		boolean more = false;
 		if (readEvents.size() > limit) {
 			readEvents.remove(limit);
-			return Response.ok(readEvents.toArray(new DataEvent[readEvents.size()])) //
+			more = true;
+		}
+		DataEvent[] array = readEvents.toArray(new DataEvent[readEvents.size()]);
+
+		if (more) {
+			return Response.ok(array) //
 					.links(next) //
 					.build();
 		} else {
-			return Response.ok(readEvents.toArray(new DataEvent[readEvents.size()])) //
+			return Response.ok(array) //
 					.build();
 		}
 	}
